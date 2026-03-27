@@ -1,6 +1,9 @@
-from sqlalchemy import String, Boolean, DateTime
+from sqlalchemy import String, Boolean, DateTime, types, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
+from uuid import UUID
+
+from src.models.entities import TaskStatus
 
 
 class Base(DeclarativeBase):
@@ -12,5 +15,10 @@ class TaskModel(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     details: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime)
-    completed_ad: Mapped[datetime] = mapped_column(DateTime)
-    status: Mapped[bool] = mapped_column(Boolean)
+    completed_at: Mapped[datetime] = mapped_column(DateTime)
+    status: Mapped[TaskStatus] = mapped_column(
+        Enum(enums=TaskStatus, values_callable=lambda x: [e.value for e in x]),
+        nullable=False,
+    )
+
+    id: Mapped[UUID] = mapped_column(types.UUID, primary_key=True)
