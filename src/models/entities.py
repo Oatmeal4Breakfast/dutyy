@@ -1,27 +1,21 @@
 import uuid
 from datetime import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Optional, Sequence
 from abc import ABC, abstractmethod
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Select, select, Result
-from src.models.schemas import TaskModel
-from enum import StrEnum, auto
-
-
-class TaskStatus(StrEnum):
-    COMPLETE = auto()
-    INCOMPLETE = auto()
+from src.models.schemas import TaskModel, TaskStatus
 
 
 @dataclass
 class Task:
     id: uuid.UUID
     name: str
-    details: Optional[str] = None
     created_at: datetime
-    completed_at: Optional[datetime] = None
     status: TaskStatus
+    completed_at: Optional[datetime] = None
+    details: Optional[str] = None
 
 
 def _to_entity(model: TaskModel) -> Task:
@@ -56,7 +50,7 @@ class AbstractRepo[T](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, entity: T) -> None:
+    async def update(self, entity: T) -> T | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -95,5 +89,18 @@ class TaskRepo(AbstractRepo[Task]):
         return [_to_entity(model) for model in models]
 
     async def add(self, entity: Task) -> None:
-        model = _to_model(entity)
+        model: TaskModel = _to_model(entity)
         self.session.add((model))
+
+    async def update(self, entity: Task) -> Task | None:
+        stmt: Select[tuple[TaskModel]] = select(TaskModel).where(
+            TaskModel.id == entity.id
+        )
+        result: Result[tuple[TaskModel]] = await self.session.execute(stmt)
+        model: TaskModel | None = result.scalar_one_or_none()
+        if model is None:
+            return
+        for key, value in asdict(entity):
+            if key != "id":
+                setattr(model, key, value)
+        return entity
