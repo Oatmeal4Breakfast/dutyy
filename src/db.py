@@ -18,7 +18,7 @@ def _build_db_uri(config: Config) -> str:
         db_file_path: str = config.db_uri.replace("sqlite:///", "")
         db_abs_path: Path = PROJECT_ROOT / db_file_path
         db_abs_path.parent.mkdir(parents=True, exist_ok=True)
-        return f"sqlite:///{db_abs_path}"
+        return f"sqlite+aiosqlite:///{db_abs_path}"
     else:
         raise ValueError(f"{config.db_uri} is not a valid sqlite uri")
 
