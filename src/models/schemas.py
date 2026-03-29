@@ -3,6 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 from uuid import UUID
 from enum import StrEnum, auto
+from typing import Optional
 
 
 class TaskStatus(StrEnum):
@@ -17,11 +18,11 @@ class Base(DeclarativeBase):
 class TaskModel(Base):
     __tablename__ = "task"
     name: Mapped[str] = mapped_column(String, nullable=False)
-    details: Mapped[str] = mapped_column(String)
+    details: Mapped[Optional[str]] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime)
-    completed_at: Mapped[datetime] = mapped_column(DateTime)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     status: Mapped[TaskStatus] = mapped_column(
-        Enum(enums=TaskStatus, values_callable=lambda x: [e.value for e in x]),
+        Enum(TaskStatus),
         nullable=False,
     )
 
