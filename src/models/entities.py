@@ -71,11 +71,7 @@ class TaskRepo(AbstractRepo[Task]):
         return _to_entity(model)
 
     async def get_by_name(self, name: str) -> Task | None:
-        stmt: Select[tuple[TaskModel]] = (
-            select(TaskModel)
-            .where(TaskModel.name == name)
-            .where(TaskModel.status == "active")
-        )
+        stmt: Select[tuple[TaskModel]] = select(TaskModel).where(TaskModel.name == name)
         result: Result[tuple[TaskModel]] = await self.session.execute(stmt)
         model: TaskModel | None = result.scalar_one_or_none()
         if model is None:
@@ -84,6 +80,14 @@ class TaskRepo(AbstractRepo[Task]):
 
     async def get_all(self) -> list[Task]:
         stmt: Select[tuple[TaskModel]] = select(TaskModel)
+        result: Result[tuple[TaskModel]] = await self.session.execute(stmt)
+        models: Sequence[TaskModel] = result.scalars().all()
+        return [_to_entity(model) for model in models]
+
+    async def get_all_incomplete(self) -> list[Task]:
+        stmt: Select[tuple[TaskModel]] = select(TaskModel).where(
+            TaskModel.status == "incomplete"
+        )
         result: Result[tuple[TaskModel]] = await self.session.execute(stmt)
         models: Sequence[TaskModel] = result.scalars().all()
         return [_to_entity(model) for model in models]
@@ -100,7 +104,7 @@ class TaskRepo(AbstractRepo[Task]):
         model: TaskModel | None = result.scalar_one_or_none()
         if model is None:
             return
-        for key, value in asdict(entity):
+        for key, value in asdict(entity).items():
             if key != "id":
                 setattr(model, key, value)
         return entity
