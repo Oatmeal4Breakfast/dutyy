@@ -7,7 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
   "aiosqlite==0.22.1",
   "click==8.3.1",
-  "pydantic-settings==2.13.1",
+  "platformdirs>=4.9.4",
   "sqlalchemy[asyncio]==2.0.48",
 ]
 [project.scripts]
