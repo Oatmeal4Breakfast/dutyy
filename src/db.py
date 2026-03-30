@@ -31,7 +31,7 @@ def _create_db_engine(db_uri: str) -> AsyncEngine:
 config: Config = get_config()
 db_uri: str = _build_db_uri(config=config)
 engine: AsyncEngine = _create_db_engine(db_uri=db_uri)
-SessonLocal: async_sessionmaker[AsyncSession] = async_sessionmaker(bind=engine)
+SessionLocal: async_sessionmaker[AsyncSession] = async_sessionmaker(bind=engine)
 
 
 async def init_db() -> None:
@@ -40,7 +40,7 @@ async def init_db() -> None:
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with SessonLocal() as session:
+    async with SessionLocal() as session:
         try:
             yield session
             await session.commit()

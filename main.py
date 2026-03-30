@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, UTC
 
 from src.models.entities import Task, TaskRepo
-from src.models.schemas import TaskStatus, TaskModel
+from src.models.schemas import TaskStatus
 from src.db import init_db, get_db
 
 
@@ -62,11 +62,12 @@ async def add_dutyy(name: str, details: str) -> None:
 async def list_tasks(all) -> None:
     async for session in get_db():
         repo = TaskRepo(session)
+        results: list = []
         if all:
             results: list[Task] = await repo.get_all()
-            print_dutyys(results)
+        else:
+            results: list[Task] = await repo.get_all_incomplete()
 
-        results: list[Task] = await repo.get_all_incomplete()
         print_dutyys(results)
 
 
@@ -82,10 +83,11 @@ async def mark_complete(name, status):
         if task is None:
             raise ValueError(f"Could not retrieve task with name {name}")
 
-        if task.status == "complete":
+        if task.status == TaskStatus.COMPLETE:
             return
 
-        task.status: str = status
+        task.status: str = TaskStatus.COMPLETE
+        task.completed_at = datetime.now(tz=UTC)
         await repo.update(task)
 
 
