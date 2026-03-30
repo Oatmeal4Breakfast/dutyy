@@ -67,3 +67,5 @@ dutyy complete "Example"
 ## Road Map
 
 - [ ] Add support to mark dutyy as complete by passing ID
+- [ ] Add stats and new line char with the list command
+- [ ] set default value for --all option
