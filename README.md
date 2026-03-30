@@ -38,11 +38,15 @@ Adding a dutyy with the optional detail flag
 dutyy add "Example" --detail "Details about this example dutyy"
 ```
 
+![add command](./assets/add_command.png)
+
 Listing only incomplete dutyy
 
 ```bash
 dutyy list
 ```
+
+![list command](./assets/list_command.png)
 
 Listing all dutyy
 
@@ -50,11 +54,15 @@ Listing all dutyy
 dutyy list --all
 ```
 
+![list all command](./assets/list_all_command.png)
+
 Marking dutyy as complete
 
 ```bash
 dutyy complete "Example"
 ```
+
+![complete command](./assets/complete_command.png)
 
 ## Road Map
 
