@@ -20,7 +20,7 @@ def async_command(fn):
 def print_dutyys(tasks: list[Task]) -> None:
     for task in tasks:
         click.secho(
-            message=f"Task: {task.name}\nDetails: {task.details}\nStatus: {task.status}",
+            message=f"Task: {task.name}\nDetails: {task.details}\nStatus: {task.status}\n\n",
             fg="yellow",
             color=True,
         )
@@ -53,7 +53,9 @@ async def add_dutyy(name: str, details: str) -> None:
             status=TaskStatus.INCOMPLETE,
         )
         await repo.add(task)
-        click.secho(message=f"{task.name} added...", fg="blue", color=True)
+        click.secho(
+            message=f"Dutyy with name: {task.name} added...", fg="blue", color=True
+        )
 
 
 @cli.command(name="list")
