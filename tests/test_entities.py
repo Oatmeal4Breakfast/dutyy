@@ -17,6 +17,9 @@ class FakeTaskRepo(AbstractRepo[Task]):
             if value.name == name:
                 return self._tasks.get(key)
 
+    async def get_all(self) -> list[Task]:
+        return [val for val in self._tasks.values()]
+
     async def add(self, entity) -> None:
         self._tasks[entity.id] = entity
         return

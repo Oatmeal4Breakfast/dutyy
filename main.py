@@ -18,9 +18,10 @@ def async_command(fn):
 
 
 def print_dutyys(tasks: list[Task]) -> None:
+    click.secho(message="=" * 30, fg="yellow", color=True)
     for task in tasks:
         click.secho(
-            message=f"Task: {task.name}\nDetails: {task.details}\nStatus: {task.status}\n\n",
+            message=f"Task: {task.name}\nDetails: {task.details}\nStatus: {task.status}\n",
             fg="yellow",
             color=True,
         )
@@ -46,7 +47,6 @@ async def add_dutyy(name: str, details: str) -> None:
     async for session in get_db():
         repo = TaskRepo(session)
         task = Task(
-            id=uuid.uuid7(),
             name=name,
             details=details,
             created_at=datetime.now(UTC),
@@ -67,10 +67,16 @@ async def list_tasks(all) -> None:
         results: list = []
         if all:
             results: list[Task] = await repo.get_all()
+            incomplete = [t for t in results if t.status == TaskStatus.INCOMPLETE]
+            print_dutyys(results)
+            click.secho(
+                message=f"Incomplete dutyys: {len(incomplete)} | Total dutyys: {len(results)} | Percentage Complete: {((len(results) - len(incomplete)) / len(results)) * 100}%",
+                fg="green",
+                color=True,
+            )
         else:
             results: list[Task] = await repo.get_all_incomplete()
-
-        print_dutyys(results)
+            print_dutyys(results)
 
 
 @cli.command(name="complete")

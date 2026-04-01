@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Optional, Sequence
 from abc import ABC, abstractmethod
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,12 +10,12 @@ from src.models.schemas import TaskModel, TaskStatus
 
 @dataclass
 class Task:
-    id: uuid.UUID
     name: str
     created_at: datetime
     status: TaskStatus
     completed_at: Optional[datetime] = None
     details: Optional[str] = None
+    id: uuid.UUID = field(default_factory=uuid.uuid7)
 
 
 def _to_entity(model: TaskModel) -> Task:
