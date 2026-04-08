@@ -108,3 +108,10 @@ class TaskRepo(AbstractRepo[Task]):
             if key != "id":
                 setattr(model, key, value)
         return entity
+
+    async def search_by_name(self, name: str) -> Task | None:
+        stmt: Select[tuple[TaskModel]] = select(TaskModel).where(
+            TaskModel.name.like(f"${name}%")
+        )
+        result: Result[tuple[TaskModel]] = await self.session.execute(stmt)
+        model: 
