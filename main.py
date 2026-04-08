@@ -87,15 +87,30 @@ async def mark_complete(name, status):
     async for session in get_db():
         repo = TaskRepo(session)
         click.echo(name)
-        task = await repo.get_by_name(name)
-        if task is None:
-            raise ValueError(f"Could not retrieve task with name {name}")
+        tasks: list[Task] = await repo.search_by_name(name)
+
+        if not tasks:
+            raise click.UsageError(f"Could not retrieve task with name: {name}")
+
+        if len(tasks) > 1:
+            for idx, task in enumerate(tasks):
+                click.echo(message=f"{idx + 1}. {task.name}")
+            selected_task = int(
+                click.prompt(text="More than one result found. Please select")
+            )
+
+            if (selected_task - 1) not in range(0, len(tasks)):
+                raise click.UsageError("Selection out of range")
+
+            task = tasks[selected_task - 1]
+        else:
+            task = tasks[0]
 
         if task.status == TaskStatus.COMPLETE:
             return
 
         task.status: str = TaskStatus.COMPLETE
-        task.completed_at = datetime.now(tz=UTC)
+        task.completed_at: datetime = datetime.now(tz=UTC)
         await repo.update(task)
 
 
