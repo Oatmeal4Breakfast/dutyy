@@ -1,23 +1,15 @@
-import asyncio
+from turtle import color
 import click
-import functools
-import uuid
 from datetime import datetime, UTC
+
+from src.cli.decorators import async_command
 
 from src.models.entities import Task, TaskRepo
 from src.models.schemas import TaskStatus
 from src.db import init_db, get_db
 
 
-def async_command(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(fn(*args, **kwargs))
-
-    return wrapper
-
-
-def print_dutyys(tasks: list[Task]) -> None:
+def _print_dutyys(tasks: list[Task]) -> None:
     click.secho(message="=" * 30, fg="yellow", color=True)
     for task in tasks:
         click.secho(
@@ -27,19 +19,14 @@ def print_dutyys(tasks: list[Task]) -> None:
         )
 
 
-@click.group()
-def cli() -> None:
-    pass
-
-
-@cli.command(name="init")
+@click.command(name="init")
 @async_command
 async def init() -> None:
     await init_db()
-    click.secho("Database initialized...", fg="yellow", color=True)
+    click.secho(message="Database initialized...", fg="yellow", color=True)
 
 
-@cli.command(name="add")
+@click.command(name="add")
 @click.argument("name")
 @click.option("--details", help="details about the task")
 @async_command
@@ -58,7 +45,7 @@ async def add_dutyy(name: str, details: str) -> None:
         )
 
 
-@cli.command(name="list")
+@click.command(name="list")
 @click.option("--all", default=False, help="option to filter by incomplete or all")
 @async_command
 async def list_tasks(all) -> None:
@@ -68,7 +55,7 @@ async def list_tasks(all) -> None:
         if all:
             results: list[Task] = await repo.get_all()
             incomplete = [t for t in results if t.status == TaskStatus.INCOMPLETE]
-            print_dutyys(results)
+            _print_dutyys(results)
             click.secho(
                 message=f"Incomplete dutyys: {len(incomplete)} | Total dutyys: {len(results)} | Percentage Complete: {((len(results) - len(incomplete)) / len(results)) * 100}%",
                 fg="green",
@@ -76,10 +63,10 @@ async def list_tasks(all) -> None:
             )
         else:
             results: list[Task] = await repo.get_all_incomplete()
-            print_dutyys(results)
+            _print_dutyys(results)
 
 
-@cli.command(name="complete")
+@click.command(name="complete")
 @click.argument("name")
 @click.option("--status", default="complete")
 @async_command
@@ -112,7 +99,3 @@ async def mark_complete(name, status):
         task.status: str = TaskStatus.COMPLETE
         task.completed_at: datetime = datetime.now(tz=UTC)
         await repo.update(task)
-
-
-if __name__ == "__main__":
-    cli()
