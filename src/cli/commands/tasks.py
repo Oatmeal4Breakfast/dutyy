@@ -1,11 +1,10 @@
-from turtle import color
 import click
 from datetime import datetime, UTC
 
 from src.cli.decorators import async_command
-
-from src.models.entities import Task, TaskRepo
-from src.models.schemas import TaskStatus
+from src.domain.entities import Task
+from src.adapters.task_repo import TaskRepo
+from src.domain.enums import TaskStatus
 from src.db import init_db, get_db
 
 

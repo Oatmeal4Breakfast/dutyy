@@ -1,21 +1,11 @@
 import uuid
-from datetime import datetime
-from dataclasses import dataclass, asdict, field
-from typing import Optional, Sequence
-from abc import ABC, abstractmethod
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import Select, select, Result
-from src.models.schemas import TaskModel, TaskStatus
+from sqlalchemy.ext.asyncio import AsyncSession
 
-
-@dataclass
-class Task:
-    name: str
-    created_at: datetime
-    status: TaskStatus
-    completed_at: Optional[datetime] = None
-    details: Optional[str] = None
-    id: uuid.UUID = field(default_factory=uuid.uuid7)
+from src.adapters._abstract_repo import AbstractRepo
+from src.domain.entities import Task
+from src.models.schemas import TaskModel
 
 
 def _to_entity(model: TaskModel) -> Task:
@@ -38,24 +28,6 @@ def _to_model(entity: Task) -> TaskModel:
         status=entity.status,
         id=entity.id,
     )
-
-
-class AbstractRepo[T](ABC):
-    @abstractmethod
-    async def get_by_id(self, id: uuid.UUID) -> T | None:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_by_name(self, name: str) -> T | None:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def update(self, entity: T) -> T | None:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def add(self, entity: T) -> None:
-        raise NotImplementedError
 
 
 class TaskRepo(AbstractRepo[Task]):

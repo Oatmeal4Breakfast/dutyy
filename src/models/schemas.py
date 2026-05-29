@@ -2,13 +2,8 @@ from sqlalchemy import String, DateTime, types, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 from uuid import UUID
-from enum import StrEnum, auto
 from typing import Optional
-
-
-class TaskStatus(StrEnum):
-    COMPLETE = auto()
-    INCOMPLETE = auto()
+from src.domain.enums import TaskStatus
 
 
 class Base(DeclarativeBase):
