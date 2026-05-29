@@ -22,3 +22,6 @@ class TaskModel(Base):
     )
 
     id: Mapped[UUID] = mapped_column(types.UUID, primary_key=True)
+
+    def to_dict(self) -> dict:
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
