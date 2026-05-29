@@ -5,7 +5,7 @@ from src.cli.decorators import async_command
 from src.domain.entities import Task
 from src.adapters.task_repo import TaskRepo
 from src.domain.enums import TaskStatus
-from src.db import init_db, get_db
+from src.db.sessions import init_db, get_db
 
 
 def _print_dutyys(tasks: list[Task]) -> None:

@@ -1,10 +1,13 @@
 import uuid
+from typing import Sequence
 
+from dataclasses import asdict
 from sqlalchemy import Select, select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.adapters._abstract_repo import AbstractRepo
 from src.domain.entities import Task
+from src.domain.enums import TaskStatus
 from src.models.schemas import TaskModel
 
 
