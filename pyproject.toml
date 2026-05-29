@@ -1,6 +1,7 @@
 [project]
 name = "dutyy"
 version = "0.1.0"
+authors = [{ name = "Elvin Salcedo", email = "elvin.salcedo17@gmail.com" }]
 description = "cli to manage to-dos"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -11,8 +12,12 @@ dependencies = [
   "pytest==9.0.3",
   "sqlalchemy[asyncio]==2.0.48",
 ]
+
+[tool.uv]
+exclude-newer = "1 week"
+
 [project.scripts]
-dutyy = "main:cli"
+dutyy = "src.cli.main:cli"
 
 [build-system]
 requires = ["hatchling"]
