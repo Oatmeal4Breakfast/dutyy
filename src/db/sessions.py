@@ -1,12 +1,13 @@
 from typing import AsyncGenerator
 from pathlib import Path
+
+from platformdirs import user_data_dir
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     create_async_engine,
     async_sessionmaker,
     AsyncEngine,
 )
-from platformdirs import user_data_dir
 
 from src.models.schemas import Base
 
